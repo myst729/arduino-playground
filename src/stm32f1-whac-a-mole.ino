@@ -15,20 +15,20 @@ const int PIN_COLS[NUM_COLS] = { PB13, PB14, PB3, PA4, PA6 };
 const int PIN_WS2812 = PB12;
 const int WS2812_MAP[NUM_KEYS] = { 0, 1, 2, 3, 4, 9, 8, 7, 6, 5, 10, 11, 12, 13, 14, 29, 28, 27, 26, 25, 20, 21, 22, 23, 24, 19, 18, 17, 16, 15 };
 
-int current_index = -1;
-bool hit = false;
+int target_index = -1;
+bool target_hit = false;
 
 Adafruit_NeoPixel pixels(NUM_KEYS, PIN_WS2812, NEO_GRB + NEO_KHZ800);
 
 void update_ws2812 (uint32_t color) {
   pixels.clear();
-  pixels.setPixelColor(WS2812_MAP[current_index], color);
+  pixels.setPixelColor(WS2812_MAP[target_index], color);
   pixels.show();
 }
 
 void update_index () {
   srand((unsigned int)time(NULL));
-  current_index = rand() % NUM_KEYS;
+  target_index = rand() % NUM_KEYS;
   update_ws2812(COLOR_BLUE);
 }
 
@@ -72,16 +72,16 @@ void loop() {
 
   if (key == -1) {
     // keyup
-    if (hit == true) {
-      hit = false;
+    if (target_hit == true) {
+      target_hit = false;
       update_index();
     } else {
       update_ws2812(COLOR_BLUE);
     }
   } else {
     // keydown
-    if (key == current_index) {
-      hit = true;
+    if (key == target_index) {
+      target_hit = true;
       update_ws2812(COLOR_GREEN);
     } else {
       update_ws2812(COLOR_RED);
